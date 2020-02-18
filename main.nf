@@ -34,19 +34,19 @@ log.info "Input: $params.root"
 root = file(params.root)
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*mask_wm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Segment_Tissues/*mask_wm*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{wm_for_resampled_dwi;wm_for_dti;wm_for_fodf;wm_for_registration}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*mask_gm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Segment_Tissues/*mask_cortex*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{gm_for_resampled_dwi;gm_for_dti;gm_for_fodf;gm_for_registration}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*mask_csf.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Segment_Tissues/*mask_csf*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{csf_for_resampled_dwi;csf_for_dti;csf_for_fodf;csf_for_registration}
@@ -514,19 +514,19 @@ process QC_Tracking {
 }
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*map_wm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Segment_Tissues/*mask_wm*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{wm_maps}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*map_gm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Segment_Tissues/*mask_cortex*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{gm_maps}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*map_csf.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Segment_Tissues/*mask_csf*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{csf_maps}
@@ -551,48 +551,6 @@ process QC_Segment_Tissues {
     --skip $params.segment_tissues_skip\
     --nb_threads $params.segment_tissues_nb_threads\
     --nb_columns $params.segment_tissues_nb_columns
-    """
-}
-
-Channel
-    .fromPath("$root/**/Seeding_Mask/*seeding_mask.nii.gz", maxDepth:3)
-    .map{it}
-    .toSortedList()
-    .set{seeding}
-
-Channel
-    .fromPath("$root/**/PFT_Maps/*map_include.nii.gz", maxDepth:3)
-    .map{it}
-    .toSortedList()
-    .set{include}
-
-Channel
-    .fromPath("$root/**/PFT_Maps/*map_exclude.nii.gz", maxDepth:3)
-    .map{it}
-    .toSortedList()
-    .set{exclude}
-
-process QC_PFT_Maps {
-    cpus params.pft_maps_nb_threads
-
-    input:
-    file(seeding_mask) from seeding
-    file(map_include) from include
-    file(map_exclude) from exclude
-
-    output:
-    file "report_pft_maps.html"
-    file "data"
-    file "libs"
-
-    script:
-    """
-    dmriqc_tracking_maps.py pft report_pft_maps.html\
-    --seeding_mask $seeding_mask --map_include $map_include\
-    --map_exclude $map_exclude\
-    --skip $params.pft_maps_skip\
-    --nb_threads $params.pft_maps_nb_threads\
-    --nb_columns $params.pft_maps_nb_columns
     """
 }
 
