@@ -34,25 +34,25 @@ log.info "Input: $params.root"
 root = file(params.root)
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*mask_wm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Register_T1_Maps/*mask_wm*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{wm_for_resampled_dwi;wm_for_dti;wm_for_fodf;wm_for_registration}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*mask_gm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Register_T1_Maps/*gm*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{gm_for_resampled_dwi;gm_for_dti;gm_for_fodf;gm_for_registration}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*mask_csf.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Register_T1_Maps/*csf*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{csf_for_resampled_dwi;csf_for_dti;csf_for_fodf;csf_for_registration}
 
 Channel
-    .fromPath("$root/**/Bet_DWI/*b0_bet_mask.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Bet_DWI/*b0_bet_mask*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{b0_bet_mask_for_bet}
@@ -99,13 +99,13 @@ process QC_Brain_Extraction_DWI {
 }
 
 Channel
-    .fromPath("$root/**/Bet_T1/*t1_bet_mask.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Apply_Brain_Mask/*mask_dilated.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{t1_bet_mask_for_bet}
 
 Channel
-    .fromPath("$root/**/Resample_T1/*t1_resampled.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Denoise_T1/*t1_denoised.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{t1_for_bet}
@@ -484,7 +484,7 @@ process QC_FODF {
 }
 
 Channel
-    .fromPath("$root/**/Tracking/*tracking.trk", maxDepth:3)
+    .fromPath("$root/**/Tracking/*tracking_*_rand1.trk", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{tractograms}
@@ -514,19 +514,19 @@ process QC_Tracking {
 }
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*map_wm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Register_T1_Maps/*pve_wm*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{wm_maps}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*map_gm.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Register_T1_Maps/*pve_gm*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{gm_maps}
 
 Channel
-    .fromPath("$root/**/Segment_Tissues/*map_csf.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Register_T1_Maps/*pve_csf*.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .set{csf_maps}
