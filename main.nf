@@ -460,7 +460,7 @@ process QC_FRF {
 }
 
 fodf_metrics = Channel
-    .fromFilePairs("$root/**/FODF_Metrics/*{afd_max.nii.gz,afd_sum.nii.gz,afd_total.nii.gz,nufo.nii.gz}",
+    .fromFilePairs("$root/**/FODF_Metrics/*{afd.nii.gz,afd_sum.nii.gz,afd_total.nii.gz,nufo.nii.gz}",
                     size: 4,
                     maxDepth:3,
                     flat:true)
