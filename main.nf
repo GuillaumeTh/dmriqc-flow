@@ -58,7 +58,7 @@ Channel
     .into{gm_for_resampled_dwi;gm_for_dti;gm_for_fodf;gm_for_registration}
 
 Channel
-    .fromPath("$root/**/Tissue_Segmentation/*mask_csf.nii.gz", maxDepth:3)
+    .fromPath("$root/**/Tissue_Segmentation/*csf_mask.nii.gz", maxDepth:3)
     .map{it}
     .toSortedList()
     .into{csf_for_resampled_dwi;csf_for_dti;csf_for_fodf;csf_for_registration}
